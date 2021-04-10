@@ -13,7 +13,7 @@ sudo apt-get install xz-utils
 unxz Armbian_21.02.3_Orangepizero_buster_current_5.10.21.img.xz
 sudo dd if=Armbian_5.91_Orangepizero_Debian_buster_next_4.19.59.img of=/dev/sdc bs=1M
 sudo sync
-sudo umount /media/valentin/*device
+sudo umount /media/user/*device
 ```
 
 To access Orange PI Zero on serial : 
@@ -34,13 +34,6 @@ Serial connection
 gtkterm -p /dev/ttyACM0 
 ```
 
-New root passport
-
-```
-root : root-password
-valentin : valentin-password
-```
-
 Armbian getting started documentation : https://docs.armbian.com/User-Guide_Getting-Started/#how-to-prepare-a-sd-card
 
 Activate PoE : https://parglescouk.wordpress.com/2017/04/14/getting-the-orange-pi-zero-working-with-poe/
@@ -51,7 +44,7 @@ Activate PoE : https://parglescouk.wordpress.com/2017/04/14/getting-the-orange-p
 sudo apt-get install arp-scan
 ifconfig
 sudo arp-scan --interface=enp3s0 --localnet
-ssh valentin@192.168.1.15
+ssh user@192.168.X.X
 ```
 
 #### Armbian config 
@@ -125,9 +118,7 @@ sudo npm uninstall -g homebridge homebridge-config-ui-x
 
 #### Using Homebridge
 
-http://192.168.1.15:8581
-
-Code on HomeKip app on IOS : 671-06-381
+http://192.168.X.X:8581
 
 # ARDUINO NANO receive IR code
 
