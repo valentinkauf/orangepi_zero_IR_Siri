@@ -1,10 +1,24 @@
-# Orange PI Zero
+# Orange Pi Zero IR remote control through Siri
 
-#### Os installation 
+This repo is about to create an infrared remote control that can be controlled with Siri.
+
+I face an issue with directly sending IR commands with the OPiZ. This may be due to the speed of the OPiZ gpio library. 
+
+I am working to create a solution to this problem. However, I have made a temporary solution which is to send IR commands with an Arduino Nano connected to the OPiZ.
+
+I used an Arduino Uno to receive IR codes from my remotes. 
+
+I drive with this solution a Beelink GT1 and a Logitech Z906.
+
+I also power a 5V bluetooth adaptator with a NPN-PNP driver with a gpio. 
+
+## Orange PI Zero configuration
+
+### Os installation 
 
 Based on : http://toglut.net/installation-dune-armbian-sur-orange-pi-zero/
 
-Armbian Buster
+The OS installed is Armbian Buster : https://www.armbian.com/orange-pi-zero/
 
 Uncompress a img.xz file :
 
@@ -19,7 +33,7 @@ sudo umount /media/user/*device
 To access Orange PI Zero on serial : 
 
 ```
-/media/$votre-user/*uuid-de-la-µSD//boot/armbianEnv.txt 
+/media/$user/*uuid-of-the-µSD/boot/armbianEnv.txt 
 ```
 
 To verify there is :
@@ -36,9 +50,7 @@ gtkterm -p /dev/ttyACM0
 
 Armbian getting started documentation : https://docs.armbian.com/User-Guide_Getting-Started/#how-to-prepare-a-sd-card
 
-Activate PoE : https://parglescouk.wordpress.com/2017/04/14/getting-the-orange-pi-zero-working-with-poe/
-
-#### Scan network to find OPIZero IP
+### Scan network to find OPIZero IP
 
 ```
 sudo apt-get install arp-scan
@@ -47,7 +59,7 @@ sudo arp-scan --interface=enp3s0 --localnet
 ssh user@192.168.X.X
 ```
 
-#### Armbian config 
+### Armbian config 
 
 ```
 armbian-config
@@ -55,15 +67,9 @@ armbian-config
 
 https://docs.armbian.com/User-Guide_Armbian-Config/
 
-#### Install Homebridge
+### Install Homebridge
 
-https://techarea.fr/installation-homebridge-sur-raspberry-pi/
-
-https://github.com/homebridge/homebridge/wiki/Install-Homebridge-on-Raspbian
-
-Node.js on OPIZero : https://rfltools.wordpress.com/2017/09/03/installing-node-js-on-an-orange-pi-zero/
-
-##### Install Node.js
+#### Install Node.js
 
 ```
 sudo apt update
@@ -84,7 +90,7 @@ node -v
 
 Version installed v15.12.0
 
-##### Install Homebridge and Homebridge UI
+#### Install Homebridge and Homebridge UI
 
 Install Homebridge and the Homebridge UI using the following command:
 
@@ -92,17 +98,17 @@ Install Homebridge and the Homebridge UI using the following command:
 sudo npm install -g --unsafe-perm homebridge homebridge-config-ui-x
 ```
 
-To setup Homebridge as a service that will start on boot you can use the provided hb-service command.
+To setup Homebridge as a service that will start on boot, you can use the provided hb-service command.
 
 ```
 sudo hb-service install --user homebridge
 ```
 
-This command will do everything that is required to setup Homebridge  and the Homebridge UI as a service on your system, it will create the  user if it does not already exist, and create the default Homebridge `config.json` under `/var/lib/homebridge` if it does not already exist.
+This command will do everything that is required to setup Homebridge  and the Homebridge UI as a service on your system, it will create the user if it does not already exist, and create the default Homebridge `config.json` under `/var/lib/homebridge` if it does not already exist.
 
 When setting up Homebridge as a service using this command, the UI  will stay online even if Homebridge is crashing due to a bad plugin or  configuration error.
 
-##### How To Uninstall Homebridge
+#### How To Uninstall Homebridge
 
 To remove the Homebridge service run:
 
@@ -120,38 +126,13 @@ sudo npm uninstall -g homebridge homebridge-config-ui-x
 
 http://192.168.X.X:8581
 
-# ARDUINO NANO receive IR code
+## ARDUINO NANO receive IR code
 
-code : 
+This code is for catch your remotes codes on a serial monitor. 
 
-```
-#include <IRremote.h>
+You will find this code in the arduino_code folder. 
 
-int IRPIN = 2;
-void setup() {
-	Serial.begin(9600);
-	Serial.println("Enabling IRin");
-	IrReceiver.begin(IRPIN, ENABLE_LED_FEEDBACK);
-	Serial.println("Enabled IRin");
-}
+Library used : https://github.com/Arduino-IRremote/Arduino-IRremote
 
-void loop() {
-	if (IrReceiver.decode()) {
-		Serial.println(IrReceiver.decodedIRData.decodedRawData, HEX);
-		IrReceiver.resume();
-	}
-	delay(500);
-}
-```
+Arduino Uno led receiver connection : G = GND, R = Vcc 5V, Y = data PIN2
 
-library : https://github.com/Arduino-IRremote/Arduino-IRremote
-
-Arduino Uno led receiver : G = GND, R = Vcc 5V, Y = data PIN2
-
-Android box Beelink GT1: ON/OFF    : AE517F80
-
-In binary 0xAE517F80 : 0b10101110010100010111111110000000
-
-Logitech Z906 : ON/OFF : 7F80A002
-
-Logitech change input    : F708A002
